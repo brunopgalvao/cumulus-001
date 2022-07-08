@@ -10,6 +10,9 @@ mod weights;
 pub mod xcm_config;
 
 use cumulus_pallet_parachain_system::RelayNumberStrictlyIncreases;
+
+use cumulus_pallet_parachain_system::RelaychainBlockNumberProvider;
+
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -457,6 +460,7 @@ impl pallet_collator_selection::Config for Runtime {
 /// Configure the pallet template in pallets/template.
 impl pallet_template::Config for Runtime {
 	type Event = Event;
+	type RelayChainBlockNumber = RelaychainBlockNumberProvider<Runtime>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.

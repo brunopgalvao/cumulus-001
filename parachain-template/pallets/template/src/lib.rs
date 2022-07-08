@@ -19,11 +19,15 @@ pub mod pallet {
 	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
 
+	use sp_runtime::traits::BlockNumberProvider;
+
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
 		/// Because this pallet emits events, it depends on the runtime's definition of an event.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		/// Relaychain BlockNumberProvider
+		type RelayChainBlockNumber: BlockNumberProvider<BlockNumber = Self::BlockNumber>;
 	}
 
 	#[pallet::pallet]
@@ -73,7 +77,9 @@ pub mod pallet {
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
-
+			let current_relaychain_block_number = T::RelayChainBlockNumber::current_block_number();
+			log::info!("The current relaychain block number is {:?}", current_relaychain_block_number);
+			
 			// Update storage.
 			<Something<T>>::put(something);
 
